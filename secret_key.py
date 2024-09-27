@@ -1,0 +1,1 @@
+Gemini_api_key='Your_Gemini_API_key'
