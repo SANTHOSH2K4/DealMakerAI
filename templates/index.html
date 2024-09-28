@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ChatBot UI</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-image: url("{{ url_for('static', filename='images/background.png')}}");
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="chatbot-button" class="chatbot-button">
+      <img
+        src="{{ url_for('static', filename='images/chatbot-icon.gif') }}"
+        alt="Chatbot"
+      />
+    </div>
+    <div id="chat-container" class="chat-container">
+      <div id="close-button" class="close-button">X</div>
+      <div class="chat-log" id="chat-log">
+        <div class="bot-answer">
+          <div class="chatbot-icon">
+            <img
+              src="{{ url_for('static', filename='images/chatbot.png') }}"
+              width="30px"
+              height="30px"
+              alt="Chatbot"
+            />
+          </div>
+          <p>Hi there👋,Tell me about the product to discuss the feature and available offers.</p>
+        </div>
+        <!-- Template for user response -->
+        <div class="you-answer-template" style="display: none">
+          <div class="user-icon">
+            <img
+              src="{{ url_for('static', filename='images/user.png') }}"
+              width="30px"
+              height="30px"
+              alt="User"
+            />
+          </div>
+          <p class="up"></p>
+        </div>
+
+        <!-- Template for bot response -->
+        <div class="bot-answer-template" style="display: none">
+          <div class="chatbot-icon">
+            <img
+              src="{{ url_for('static', filename='images/chatbot.png') }}"
+              width="30px"
+              height="30px"
+              alt="Chatbot"
+            />
+          </div>
+          <p class="bp"></p>
+        </div>
+      </div>
+
+      <div class="loading-icon-template" style="display: none;">
+        <img src="{{ url_for('static', filename='images/load-icon2.gif') }}" alt="Loading" width="50px" height="50px">
+      </div>
+      
+      
+      <div class="message" >
+        <div class="suggestion" id="suggestion">
+          <div class="item1" id="suggest1">
+            <a href="#" id="suggestion1">how much offer would you give for biscuits.</a>
+          </div>
+          <div class="item2" id="suggest2">
+            <a href="#" id="suggestion2">is yogurt available?</a>
+          </div>
+        </div>
+
+        <div class="user-input">
+          <input
+            required
+            name="message"
+            id="message"
+            placeholder="Enter Message"
+          />
+          <button style="margin-left: 5px;" id="send-button">Send</button>
+        </div>
+      </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <style>
+      * {
+        box-sizing: border-box;
+        scroll-behavior: smooth;
+      }
+      .login-button {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        z-index: 1001; /* Ensure the button appears above other elements */
+      }
+
+      .login-button button {
+        padding: 10px;
+        background-color: #28a745; /* Green theme color */
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+
+      .chat-container {
+        border: 1px solid black;
+        border-radius: 20px;
+        max-width: 500px;
+        height: 630px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: rgba(225, 225, 225, 0.842);
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        backdrop-filter: blur(1px);
+      }
+
+      .chat-log {
+        height: 80%;
+        overflow-y: auto;
+        border-bottom: 1px solid #ccc;
+        padding-right: 10px;
+        padding-bottom: 10px;
+        scrollbar-width: thin; /* For Firefox */
+        scrollbar-color: #28a745 #f0f0f0; /* Customize scrollbar colors */
+      }
+
+      /* Styles for Webkit browsers (Chrome, Safari) */
+      .chat-log::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      .chat-log::-webkit-scrollbar-thumb {
+        background-color: #28a745; /* Green theme */
+      }
+
+      /* Styles for Firefox */
+      .chat-log::-webkit-scrollbar-track {
+        background-color: #f0f0f0;
+      }
+
+      .suggestion {
+        display: flex;
+        justify-content: space-evenly;
+        margin-left: 5px;
+        gap: 10px;
+        padding: 5px;
+      }
+
+      .item1,
+      .item2 {
+        padding: 8px;
+        text-decoration: none;
+        margin-top: 5px;
+        border: 1px solid gray;
+        border-radius: 10px;
+        font-size: small;
+        border-color: #28a745; /* Green theme */
+        text-align: center;
+        justify-content: center;
+      }
+
+      .item1 a,
+      .item2 a {
+        text-decoration: none;
+        color: #28a745; /* Green theme */
+      }
+
+      .user-input {
+        display: flex;
+        width: 90%;
+        margin: 10px;
+      }
+
+      .user-input input {
+        padding: 0px 12px;
+      }
+
+      #send-button {
+        border-radius: 10px;
+        background-color: #28a745; /* Green theme */
+      }
+
+      #message {
+        height: 35px;
+        width: 100%;
+        margin-left: 20px;
+        max-height: 60px;
+        overflow-y: hidden;
+        border: 1px solid gray;
+        border-radius: 5px;
+      }
+
+      button {
+        padding: 8px 15px;
+        border: none;
+        background-color: #28a745; /* Green theme */
+        color: #fff;
+        border-radius: 0 5px 5px 0;
+        cursor: pointer;
+      }
+
+      .chatbot-button {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        width: 120px;
+        height: 60px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        z-index: 1000;
+        transition: transform 0.3s ease-in-out;
+        transform: translate(
+          0,
+          0
+        ); /* Adjust the horizontal and vertical positioning */
+      }
+
+      .chatbot-button img {
+        width: 100px;
+        height: 100px;
+        fill: #fff;
+      }
+
+      .chat-container {
+        position: fixed;
+        top: 0;
+        right: -500px; /* Initially hidden */
+        width: 500px;
+        height: 100%;
+        background-color: rgba(225, 225, 225, 0.842);
+        transition: right 0.3s ease-in-out;
+        z-index: 999;
+      }
+
+      .close-button {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        font-size: 20px;
+        cursor: pointer;
+        z-index: 1001;
+        color: #000; /* Default color */
+        transition: color 0.3s; /* Transition for color change */
+      }
+
+      .close-button:hover {
+        color: #ff0000; /* Color change on hover */
+      }
+
+      .you-answer {
+        background-color: #ffffff; /* Background color for user responses */
+        border-radius: 15px;
+        padding: 10px;
+        margin: 10px 0;
+        max-width: 70%;
+        margin-left: auto; /* Move user responses to the right */
+        text-align: left; /* Align text to the left within the message box */
+      }
+
+      .bot-answer {
+        background-color: #28a745; /* Green theme for chatbot responses */
+        border-radius: 15px;
+        color: #fff; /* Text color for chatbot responses */
+        padding: 10px;
+        margin: 10px 0;
+        max-width: 70%;
+      }
+      .user-icon img,
+      .chatbot-icon img {
+        margin-right: 3px; /* Add some spacing between the icon and message text */
+      }
+      .message {
+        width: 100%;
+        position: absolute;
+        bottom: 30px;
+        left: 5px;
+      }
+    </style>
+  </body>
+</html>
